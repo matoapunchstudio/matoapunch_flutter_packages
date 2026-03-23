@@ -1,67 +1,267 @@
-# Matoapunch Rbac
+# matoapunch_rbac
 
-[![style: very good analysis][very_good_analysis_badge]][very_good_analysis_link]
-[![Powered by Mason](https://img.shields.io/endpoint?url=https%3A%2F%2Ftinyurl.com%2Fmason-badge)](https://github.com/felangel/mason)
-[![License: MIT][license_badge]][license_link]
+A lightweight RBAC package for Flutter and Dart.
 
-A Very Good Project created by Very Good CLI.
+It provides:
+- immutable RBAC state through `MatoapunchRbac`
+- domain entities for `Permission` and `Role`
+- JSON and base64 permission encoding helpers
+- permission check extensions for roles and permission-carrying objects
+- a simple `RbacGuard` widget for protecting UI
 
-## Installation 💻
+This package is designed to stay small and predictable. `Permission.name` is
+the stable identity used for comparisons and permission checks.
 
-**❗ In order to start using Matoapunch Rbac you must have the [Flutter SDK][flutter_install_link] installed on your machine.**
-
-Install via `flutter pub add`:
+## Install
 
 ```sh
 dart pub add matoapunch_rbac
 ```
 
----
+## Public Imports
 
-## Continuous Integration 🤖
+Use the root import for the full package:
 
-Matoapunch Rbac comes with a built-in [GitHub Actions workflow][github_actions_link] powered by [Very Good Workflows][very_good_workflows_link] but you can also add your preferred CI/CD solution.
-
-Out of the box, on each pull request and push, the CI `formats`, `lints`, and `tests` the code. This ensures the code remains consistent and behaves correctly as you add functionality or make changes. The project uses [Very Good Analysis][very_good_analysis_link] for a strict set of analysis options used by our team. Code coverage is enforced using the [Very Good Workflows][very_good_coverage_link].
-
----
-
-## Running Tests 🧪
-
-For first time users, install the [very_good_cli][very_good_cli_link]:
-
-```sh
-dart pub global activate very_good_cli
+```dart
+import 'package:matoapunch_rbac/matoapunch_rbac.dart';
 ```
 
-To run all unit tests:
+Or import by area:
 
-```sh
-very_good test --coverage
+```dart
+import 'package:matoapunch_rbac/domain.dart';
+import 'package:matoapunch_rbac/extensions.dart';
+import 'package:matoapunch_rbac/utils.dart';
+import 'package:matoapunch_rbac/widgets.dart';
 ```
 
-To view the generated coverage report you can use [lcov](https://github.com/linux-test-project/lcov).
+## Core Types
 
-```sh
-# Generate Coverage Report
-genhtml coverage/lcov.info -o coverage/
+### Permission
 
-# Open Coverage Report
-open coverage/index.html
+Represents a single access capability.
+
+```dart
+const permission = Permission(
+  name: 'user.read',
+  displayName: 'Read User',
+);
 ```
 
-[flutter_install_link]: https://docs.flutter.dev/get-started/install
-[github_actions_link]: https://docs.github.com/en/actions/learn-github-actions
-[license_badge]: https://img.shields.io/badge/license-MIT-blue.svg
-[license_link]: https://opensource.org/licenses/MIT
-[logo_black]: https://raw.githubusercontent.com/VGVentures/very_good_brand/main/styles/README/vgv_logo_black.png#gh-light-mode-only
-[logo_white]: https://raw.githubusercontent.com/VGVentures/very_good_brand/main/styles/README/vgv_logo_white.png#gh-dark-mode-only
-[mason_link]: https://github.com/felangel/mason
-[very_good_analysis_badge]: https://img.shields.io/badge/style-very_good_analysis-B22C89.svg
-[very_good_analysis_link]: https://pub.dev/packages/very_good_analysis
-[very_good_cli_link]: https://pub.dev/packages/very_good_cli
-[very_good_coverage_link]: https://github.com/marketplace/actions/very-good-coverage
-[very_good_ventures_link]: https://verygood.ventures
-[very_good_ventures_link_light]: https://verygood.ventures#gh-light-mode-only
-[very_good_ventures_link_dark]: https://verygood.ventures#gh-dark-mode-only
-[very_good_workflows_link]: https://github.com/VeryGoodOpenSource/very_good_workflows
+### Role
+
+Represents a named group of permissions.
+
+```dart
+const role = Role(
+  name: 'admin',
+  displayName: 'Administrator',
+  permissions: [
+    Permission(name: 'user.read', displayName: 'Read User'),
+    Permission(name: 'user.write', displayName: 'Write User'),
+  ],
+);
+```
+
+### MatoapunchRbac
+
+Stores an immutable permission set and exposes permission checks.
+
+```dart
+final rbac = MatoapunchRbac(
+  permissions: const [
+    Permission(name: 'user.read', displayName: 'Read User'),
+  ],
+);
+
+final canRead = rbac.hasPermissionByName('user.read');
+final canDelete = rbac.hasPermissionByName('user.delete');
+```
+
+You can also build RBAC state from roles:
+
+```dart
+final rbacFromRole = MatoapunchRbac.fromRole(role);
+final rbacFromRoles = MatoapunchRbac.fromAnyRole([role]);
+```
+
+## JSON Format
+
+`toJson()` writes snake_case fields:
+
+```json
+{
+  "name": "user.read",
+  "display_name": "Read User"
+}
+```
+
+The package keeps backward compatibility when reading data:
+- writes `display_name`
+- reads both `display_name` and legacy `displayName`
+
+This is important for previously stored permission payloads and role JSON.
+
+## Encode And Decode Permissions
+
+Permissions can be encoded into base64 for transport or storage.
+
+```dart
+final encoded = RbacCodec.encodePermissions(
+  const [
+    Permission(name: 'user.read', displayName: 'Read User'),
+  ],
+);
+
+final decoded = RbacCodec.decodePermissions(encoded);
+```
+
+Or use extensions:
+
+```dart
+final encoded = const [
+  Permission(name: 'user.read', displayName: 'Read User'),
+].toBase64();
+
+final decoded = encoded.toPermissions();
+```
+
+## Check Permissions With Extensions
+
+### Role checks
+
+```dart
+final canRead = role.hasPermissionByName('user.read');
+final canAny = role.hasAnyPermissionsByName([
+  'user.delete',
+  'user.write',
+]);
+```
+
+### List<Role> checks
+
+```dart
+final roles = [role];
+
+final canWrite = roles.hasPermissionByName('user.write');
+```
+
+### ShouldHavePermission checks
+
+Any object implementing `ShouldHavePermission` can reuse the same helpers.
+
+```dart
+class MenuAccess implements ShouldHavePermission {
+  const MenuAccess(this.permissions);
+
+  @override
+  final List<Permission> permissions;
+}
+
+final access = MenuAccess(
+  const [
+    Permission(name: 'menu.reports', displayName: 'Reports Menu'),
+  ],
+);
+
+final canOpenReports = access.hasPermissionByName('menu.reports');
+```
+
+## Protect Widgets
+
+Use `RbacGuard` to show or hide UI based on granted permissions.
+
+```dart
+RbacGuard(
+  rbac: rbac,
+  permissions: const ['user.read'],
+  child: const Text('Allowed'),
+)
+```
+
+By default it grants access when any required permission matches.
+
+Require all permissions:
+
+```dart
+RbacGuard(
+  rbac: rbac,
+  permissions: const ['user.read', 'user.write'],
+  match: RbacGuardMatch.all,
+  child: const Text('Allowed'),
+)
+```
+
+Use convenience constructors when you have permissions or roles directly:
+
+```dart
+RbacGuard.fromPermissions(
+  grantedPermissions: const [
+    Permission(name: 'user.read', displayName: 'Read User'),
+  ],
+  permissions: const ['user.read'],
+  child: const Text('Allowed'),
+)
+
+RbacGuard.fromRole(
+  role: role,
+  permissions: const ['user.read'],
+  child: const Text('Allowed'),
+)
+
+RbacGuard.fromRoles(
+  roles: [role],
+  permissions: const ['user.read'],
+  child: const Text('Allowed'),
+)
+```
+
+When access is denied, the default fallback is `SizedBox.shrink()`.
+
+## Recommended Usage Pattern
+
+Use these rules consistently:
+- use `name` as the stable identifier
+- keep display labels in `displayName`
+- serialize outward with snake_case
+- accept both snake_case and legacy camelCase when reading stored data
+- prefer `MatoapunchRbac` for checks when you already have RBAC state
+- use extensions for ergonomic checks on `Role`, `List<Role>`, and `ShouldHavePermission`
+
+## Example Flow
+
+```dart
+final role = Role.fromJson(const {
+  'name': 'admin',
+  'display_name': 'Administrator',
+  'permissions': [
+    {
+      'name': 'user.read',
+      'display_name': 'Read User',
+    },
+  ],
+});
+
+final rbac = MatoapunchRbac.fromRole(role);
+
+if (rbac.hasPermissionByName('user.read')) {
+  // allow access
+}
+
+final encoded = rbac.encodePermissions();
+final restored = MatoapunchRbac.fromEncodedPermissions(encoded);
+```
+
+## Development
+
+Run analyzer:
+
+```sh
+flutter analyze
+```
+
+Run tests:
+
+```sh
+flutter test
+```
