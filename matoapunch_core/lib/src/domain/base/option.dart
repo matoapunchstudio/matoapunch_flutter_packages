@@ -13,6 +13,7 @@ sealed class Option<T> with _$Option<T> {
 
   const factory Option.none() = _OptionNone;
 
+  /// Returns the wrapped value or computes a fallback with [orElse].
   T getOrElse(T Function() orElse) {
     return when(
       some: (data) => data,
@@ -20,6 +21,7 @@ sealed class Option<T> with _$Option<T> {
     );
   }
 
+  /// Returns `true` when this option contains no value.
   bool isNone() {
     return when(
       some: (data) => false,
@@ -27,6 +29,7 @@ sealed class Option<T> with _$Option<T> {
     );
   }
 
+  /// Returns `true` when this option contains a value.
   bool isSome() {
     return when(
       some: (data) => true,
