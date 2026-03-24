@@ -2,12 +2,12 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:matoa_punch_core/matoa_punch_core.dart';
+import 'package:matoapunch_core/matoapunch_core.dart';
 
 void main() {
-  group('MatoaPunchCore', () {
+  group('MatoapunchCore', () {
     test('can be instantiated', () {
-      expect(MatoaPunchCore(), isNotNull);
+      expect(MatoapunchCore(), isNotNull);
     });
   });
 }
