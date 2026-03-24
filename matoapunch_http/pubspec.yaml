@@ -11,11 +11,6 @@ dependencies:
   chopper: ^8.5.1
   flutter:
     sdk: flutter
-  matoapunch_core:
-    git:
-      url: https://github.com/matoapunchstudio/matoapunch_flutter_packages.git
-      ref: main
-      path: matoapunch_core
 
 dev_dependencies:
   flutter_test:
