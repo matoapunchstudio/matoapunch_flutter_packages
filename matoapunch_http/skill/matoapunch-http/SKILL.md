@@ -32,7 +32,7 @@ import 'package:matoapunch_http/matoapunch_http.dart';
 ## Guidance
 
 - Use `HttpErrorInterceptor` when the project wants one consistent error shape across timeout, offline, TLS, and non-2xx HTTP failures.
-- Treat `ResponseException.code` as the package-level error code and `httpCode` as the HTTP status when available.
+- Treat `ResponseException.code` as the package-level error code and `httpCode` as the HTTP status only when a server response exists.
 - Prefer checking `ConnectionResultStatus.noInternet` and `ConnectionResultStatus.timeout` before generic `error`.
 - If the backend returns a JSON body with a `message` field, rely on the interceptor to surface that message.
 - Keep business logic out of the interceptor. Map transport failures here, then convert them into product-specific messaging elsewhere.

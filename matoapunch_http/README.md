@@ -83,15 +83,20 @@ try {
 }
 ```
 
+For transport failures such as timeout or offline state, `error.httpCode` is
+`null` because no HTTP response was received.
+
 ## Error Mapping
 
 `HttpErrorInterceptor` currently maps errors as follows:
 
-- Non-2xx HTTP responses become `ResponseException` with the HTTP status code.
+- Non-2xx HTTP responses become `ResponseException` with both `code` and
+  `httpCode` set to the response status.
 - Response bodies containing a `message` field use that message in the exception.
 - `SocketException` maps to `ConnectionResultStatus.noInternet` with code `1101`.
 - `HandshakeException` maps to `ConnectionResultStatus.noInternet` with code `1102`.
 - `TimeoutException` maps to `ConnectionResultStatus.timeout` with code `1103`.
+- Transport and unexpected failures leave `httpCode` as `null`.
 - Any other exception maps to `ConnectionResultStatus.error` with code `1100`.
 
 ## Development

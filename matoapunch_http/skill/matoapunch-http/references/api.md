@@ -25,7 +25,7 @@ final client = ChopperClient(
 
 - `status` as `ConnectionResultStatus`
 - `code` as the internal package error code
-- `httpCode` as the HTTP status code when applicable
+- `httpCode` as the HTTP status code when applicable, otherwise `null`
 - `message` as the normalized error message
 - `body` as the raw response body when available
 - `stackTrace` when captured
@@ -57,4 +57,5 @@ Use `ConnectionResultStatus` to classify failures:
 - `SocketException` to `noInternet` with code `1101`
 - `HandshakeException` to `noInternet` with code `1102`
 - `TimeoutException` to `timeout` with code `1103`
+- transport failures to `httpCode == null`
 - other exceptions to `error` with code `1100`
