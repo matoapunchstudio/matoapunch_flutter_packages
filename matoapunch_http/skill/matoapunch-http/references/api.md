@@ -6,6 +6,56 @@
 import 'package:matoapunch_http/matoapunch_http.dart';
 ```
 
+## HttpClient
+
+Creates a `ChopperClient` without authentication. Includes `HttpErrorInterceptor` by default.
+
+```dart
+final client = HttpClient.create(
+  baseUrl: Uri.parse('https://api.example.com'),
+  services: [MyService.create()],
+  converter: JsonConverter(),
+  interceptors: [/* additional interceptors */],
+);
+```
+
+## AuthHttpClient
+
+Creates a `ChopperClient` with authentication. Includes `AuthBearerInterceptor` and `HttpErrorInterceptor` by default.
+
+```dart
+final client = AuthHttpClient.create(
+  baseUrl: Uri.parse('https://api.example.com'),
+  tokenKey: 'token', // SharedPreferences key, defaults to 'token'
+  onRefreshToken: () async => await refreshToken(), // Optional
+  services: [MyService.create()],
+  converter: JsonConverter(),
+  interceptors: [/* additional interceptors */],
+);
+```
+
+## AuthBearerInterceptor
+
+Attaches a Bearer token from `shared_preferences` to requests. Optionally refreshes expired tokens on 401 responses.
+
+```dart
+final interceptor = AuthBearerInterceptor(
+  tokenKey: 'token', // SharedPreferences key, defaults to 'token'
+  onRefreshToken: () async {
+    // Your refresh logic
+    return 'new-token'; // Return null if refresh fails
+  },
+);
+```
+
+### Token Refresh Behavior
+
+When `onRefreshToken` is provided and a 401 response is received:
+1. The callback is invoked to get a new token.
+2. If a new token is returned, it is saved to `shared_preferences` and the request is retried.
+3. If `null` is returned, the original 401 response is passed through.
+4. Infinite loops are prevented — each request is only refreshed once.
+
 ## HttpErrorInterceptor
 
 Use `HttpErrorInterceptor` in a `ChopperClient` to normalize failures into `ResponseException`.
