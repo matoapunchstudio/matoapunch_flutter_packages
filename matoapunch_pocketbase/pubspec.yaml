@@ -1,0 +1,30 @@
+name: matoapunch_pocketbase
+description: A PocketBase wrapper for MatoaPunch Studio projects.
+version: 0.1.0+1
+publish_to: none
+
+environment:
+  sdk: ^3.9.0
+  flutter: ^3.35.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  freezed_annotation: ^3.1.0
+  json_annotation: ^4.11.0
+  matoapunch_core:
+    git:
+      url: https://github.com/matoapunchstudio/matoapunch_flutter_packages.git
+      ref: main
+      path: matoapunch_core
+  pocketbase: ^0.23.2
+  shared_preferences: ^2.5.4
+
+dev_dependencies:
+  build_runner: ^2.13.1
+  flutter_test:
+    sdk: flutter
+  freezed: ^3.2.5
+  json_serializable: ^6.13.1
+  mocktail: ^1.0.4
+  very_good_analysis: ^10.2.0

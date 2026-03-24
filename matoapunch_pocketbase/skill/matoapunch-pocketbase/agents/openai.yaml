@@ -1,0 +1,5 @@
+interface:
+  display_name: "MatoaPunch PocketBase"
+  short_description: "Work with matoapunch_pocketbase"
+  default_prompt: "Use $matoapunch-pocketbase to update this package or integrate its user/admin PocketBase clients correctly."
+
