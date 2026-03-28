@@ -12,7 +12,7 @@ void main() {
       code: 'pro',
       name: 'pro',
       displayName: 'Pro',
-      limitations: [
+      limitations: const [
         Limitation(
           name: 'enable_export',
           displayName: 'Export Feature',
@@ -36,8 +36,8 @@ void main() {
             package: package,
             limitationName: 'enable_export',
             asFeatureFlag: true,
-            child: Text('allowed'),
-            fallback: Text('denied'),
+            fallback: const Text('denied'),
+            child: const Text('allowed'),
           ),
         ),
       );
@@ -55,8 +55,8 @@ void main() {
             limitationName: 'max_projects',
             currentUsage: 3,
             requestedValue: 1,
-            child: Text('allowed'),
-            fallback: Text('denied'),
+            fallback: const Text('denied'),
+            child: const Text('allowed'),
           ),
         ),
       );
@@ -76,8 +76,8 @@ void main() {
             limitationName: 'max_projects',
             currentUsage: 5,
             requestedValue: 1,
-            child: Text('allowed'),
-            fallback: Text('denied'),
+            fallback: const Text('denied'),
+            child: const Text('allowed'),
           ),
         ),
       );

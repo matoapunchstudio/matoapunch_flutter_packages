@@ -56,6 +56,12 @@ class Limitation extends Equatable {
   /// Whether this limitation imposes no restriction.
   bool get isUnlimited => value == null;
 
+  /// Whether this boolean limitation is enabled.
+  ///
+  /// Returns `true` only if [type] is [LimitationType.boolean] and
+  /// [value] equals `1`. Returns `false` for all other cases.
+  bool get isFeatureEnabled => type == LimitationType.boolean && value == 1;
+
   /// Converts this limitation into a snake_case JSON representation.
   Map<String, dynamic> toJson() {
     return <String, dynamic>{

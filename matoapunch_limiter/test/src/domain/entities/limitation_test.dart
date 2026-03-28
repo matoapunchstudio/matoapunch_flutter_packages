@@ -57,6 +57,51 @@ void main() {
       expect(limitation.isUnlimited, isFalse);
     });
 
+    group('isFeatureEnabled', () {
+      test('returns true when type is boolean and value is 1', () {
+        final limitation = Limitation(
+          name: 'enable_export',
+          displayName: 'Export Feature',
+          type: LimitationType.boolean,
+          value: 1,
+        );
+
+        expect(limitation.isFeatureEnabled, isTrue);
+      });
+
+      test('returns false when type is boolean and value is 0', () {
+        final limitation = Limitation(
+          name: 'enable_export',
+          displayName: 'Export Feature',
+          type: LimitationType.boolean,
+          value: 0,
+        );
+
+        expect(limitation.isFeatureEnabled, isFalse);
+      });
+
+      test('returns false when type is not boolean', () {
+        final limitation = Limitation(
+          name: 'max_projects',
+          displayName: 'Maximum Projects',
+          type: LimitationType.count,
+          value: 1,
+        );
+
+        expect(limitation.isFeatureEnabled, isFalse);
+      });
+
+      test('returns false for boolean type with null value', () {
+        final limitation = Limitation(
+          name: 'enable_export',
+          displayName: 'Export Feature',
+          type: LimitationType.boolean,
+        );
+
+        expect(limitation.isFeatureEnabled, isFalse);
+      });
+    });
+
     group('equality', () {
       test('two limitations with the same name are equal', () {
         final a = Limitation(

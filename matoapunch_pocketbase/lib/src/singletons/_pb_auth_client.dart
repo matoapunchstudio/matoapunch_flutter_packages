@@ -37,6 +37,13 @@ abstract class PbAuthClient {
 
   /// Restores persisted auth state and initializes the PocketBase client.
   Future<void> setup() async {
+    if (_baseUrl.isEmpty) {
+      throw StateError(
+        'PB_BASE_URL environment variable is not set. '
+        'Set it using --dart-define=PB_BASE_URL=<url> during build/run.',
+      );
+    }
+
     final token = await _getToken();
     if (token.isNotEmpty) {
       _authStore = AsyncAuthStore(
@@ -56,7 +63,9 @@ abstract class PbAuthClient {
 
   /// Refreshes the current auth session when a token is available.
   Future<void> refresh() async {
-    final authRecord = await pocketBase.collection(collectionName).authRefresh()
+    final authRecord = await pocketBase
+        .collection(collectionName)
+        .authRefresh()
         .toResult();
 
     authRecord.when(

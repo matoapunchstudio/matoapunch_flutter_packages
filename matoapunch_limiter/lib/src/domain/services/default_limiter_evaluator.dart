@@ -5,6 +5,12 @@ import 'package:matoapunch_limiter/src/domain/entities/usage_snapshot.dart';
 import 'package:matoapunch_limiter/src/domain/services/limiter_evaluator.dart';
 
 /// Default evaluator for count, boolean, duration, and size limitations.
+///
+/// Evaluates limitations based on their type:
+/// - [LimitationType.boolean]: checks if the limitation is enabled.
+/// - [LimitationType.count]: checks if current + requested <= limit.
+/// - [LimitationType.duration]: checks if current + requested <= limit.
+/// - [LimitationType.size]: checks if current + requested <= limit.
 class DefaultLimiterEvaluator implements LimiterEvaluator {
   /// Creates a default limiter evaluator.
   const DefaultLimiterEvaluator();
@@ -39,7 +45,7 @@ class DefaultLimiterEvaluator implements LimiterEvaluator {
 
     switch (limitation.type) {
       case LimitationType.boolean:
-        final isEnabled = limitation.value == 1;
+        final isEnabled = limitation.isFeatureEnabled;
         return LimitCheckResult(
           name: limitationName,
           isAllowed: isEnabled,
@@ -91,6 +97,6 @@ class DefaultLimiterEvaluator implements LimiterEvaluator {
       return true;
     }
 
-    return limitation.type == LimitationType.boolean && limitation.value == 1;
+    return limitation.isFeatureEnabled;
   }
 }

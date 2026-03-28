@@ -2,9 +2,11 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'option.freezed.dart';
 
-/// {@template option}
-/// Option description
-/// {@endtemplate}
+/// Represents an optional value that may or may not contain data.
+///
+/// Similar to nullable types but with explicit `some` and `none` cases.
+/// Use [Option] when you need to represent the presence or absence of
+/// a value without using `null`.
 @freezed
 sealed class Option<T> with _$Option<T> {
   const Option._();

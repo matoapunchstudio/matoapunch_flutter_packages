@@ -13,7 +13,7 @@ void main() {
       code: 'pro',
       name: 'pro',
       displayName: 'Pro',
-      limitations: [
+      limitations: const [
         Limitation(
           name: 'max_projects',
           displayName: 'Maximum Projects',

@@ -101,5 +101,91 @@ void main() {
 
       expect(restored, original);
     });
+
+    group('comparison methods', () {
+      test('isHigherThan returns true when rank is higher', () {
+        final pro = TierPackage(
+          id: 'pkg_pro',
+          code: 'pro',
+          name: 'pro',
+          displayName: 'Pro',
+          rank: 2,
+          limitations: limitations,
+        );
+        final free = TierPackage(
+          id: 'pkg_free',
+          code: 'free',
+          name: 'free',
+          displayName: 'Free',
+          limitations: limitations,
+        );
+
+        expect(pro.isHigherThan(free), isTrue);
+        expect(free.isHigherThan(pro), isFalse);
+      });
+
+      test('isLowerThan returns true when rank is lower', () {
+        final pro = TierPackage(
+          id: 'pkg_pro',
+          code: 'pro',
+          name: 'pro',
+          displayName: 'Pro',
+          rank: 2,
+          limitations: limitations,
+        );
+        final free = TierPackage(
+          id: 'pkg_free',
+          code: 'free',
+          name: 'free',
+          displayName: 'Free',
+          limitations: limitations,
+        );
+
+        expect(free.isLowerThan(pro), isTrue);
+        expect(pro.isLowerThan(free), isFalse);
+      });
+
+      test('isEqualRank returns true when ranks are equal', () {
+        final pro1 = TierPackage(
+          id: 'pkg_pro1',
+          code: 'pro1',
+          name: 'pro1',
+          displayName: 'Pro 1',
+          rank: 2,
+          limitations: limitations,
+        );
+        final pro2 = TierPackage(
+          id: 'pkg_pro2',
+          code: 'pro2',
+          name: 'pro2',
+          displayName: 'Pro 2',
+          rank: 2,
+          limitations: limitations,
+        );
+
+        expect(pro1.isEqualRank(pro2), isTrue);
+        expect(pro2.isEqualRank(pro1), isTrue);
+      });
+
+      test('isEqualRank returns false when ranks differ', () {
+        final pro = TierPackage(
+          id: 'pkg_pro',
+          code: 'pro',
+          name: 'pro',
+          displayName: 'Pro',
+          rank: 2,
+          limitations: limitations,
+        );
+        final free = TierPackage(
+          id: 'pkg_free',
+          code: 'free',
+          name: 'free',
+          displayName: 'Free',
+          limitations: limitations,
+        );
+
+        expect(pro.isEqualRank(free), isFalse);
+      });
+    });
   });
 }

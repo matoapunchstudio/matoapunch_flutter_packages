@@ -26,5 +26,40 @@ void main() {
         200,
       );
     });
+
+    group('toOption', () {
+      test('returns none for left', () {
+        const either = Either<String, int>.left('error');
+
+        final option = either.toOption();
+
+        expect(option.isNone(), isTrue);
+        expect(option.isSome(), isFalse);
+      });
+
+      test('returns some for right', () {
+        const either = Either<String, int>.right(42);
+
+        final option = either.toOption();
+
+        expect(option.isSome(), isTrue);
+        expect(option.isNone(), isFalse);
+        expect(
+          option.getOrElse(() => -1),
+          42,
+        );
+      });
+
+      test('preserves right value in some', () {
+        const either = Either<String, String>.right('success');
+
+        final option = either.toOption();
+
+        expect(
+          option.getOrElse(() => 'fallback'),
+          'success',
+        );
+      });
+    });
   });
 }

@@ -26,10 +26,12 @@ void main() {
         'ok',
       );
 
-      final result = await interceptor.intercept(_FakeChain<String>(
-        request: request,
-        onProceed: (_) async => response,
-      ));
+      final result = await interceptor.intercept(
+        _FakeChain<String>(
+          request: request,
+          onProceed: (_) async => response,
+        ),
+      );
 
       expect(result, same(response));
     });
@@ -41,10 +43,12 @@ void main() {
       );
 
       await expectLater(
-        () => interceptor.intercept(_FakeChain<String>(
-          request: request,
-          onProceed: (_) async => response,
-        )),
+        () => interceptor.intercept(
+          _FakeChain<String>(
+            request: request,
+            onProceed: (_) async => response,
+          ),
+        ),
         throwsA(
           isA<ResponseException>()
               .having((e) => e.status, 'status', ConnectionResultStatus.error)
@@ -67,10 +71,12 @@ void main() {
       );
 
       await expectLater(
-        () => interceptor.intercept(_FakeChain<String>(
-          request: request,
-          onProceed: (_) async => response,
-        )),
+        () => interceptor.intercept(
+          _FakeChain<String>(
+            request: request,
+            onProceed: (_) async => response,
+          ),
+        ),
         throwsA(
           isA<ResponseException>().having(
             (e) => e.message,
@@ -88,10 +94,12 @@ void main() {
       );
 
       await expectLater(
-        () => interceptor.intercept(_FakeChain<String>(
-          request: request,
-          onProceed: (_) async => response,
-        )),
+        () => interceptor.intercept(
+          _FakeChain<String>(
+            request: request,
+            onProceed: (_) async => response,
+          ),
+        ),
         throwsA(
           isA<ResponseException>()
               .having((e) => e.code, 'code', 502)
@@ -107,10 +115,12 @@ void main() {
 
     test('maps socket exceptions to noInternet errors', () async {
       await expectLater(
-        () => interceptor.intercept(_FakeChain<String>(
-          request: request,
-          onProceed: (_) => throw const SocketException('No route to host'),
-        )),
+        () => interceptor.intercept(
+          _FakeChain<String>(
+            request: request,
+            onProceed: (_) => throw const SocketException('No route to host'),
+          ),
+        ),
         throwsA(
           isA<ResponseException>()
               .having(
@@ -118,7 +128,7 @@ void main() {
                 'status',
                 ConnectionResultStatus.noInternet,
               )
-              .having((e) => e.code, 'code', 1101)
+              .having((e) => e.code, 'code', HttpErrorCode.socket.code)
               .having((e) => e.httpCode, 'httpCode', isNull)
               .having((e) => e.message, 'message', 'No route to host'),
         ),
@@ -127,10 +137,12 @@ void main() {
 
     test('maps timeout exceptions to timeout errors', () async {
       await expectLater(
-        () => interceptor.intercept(_FakeChain<String>(
-          request: request,
-          onProceed: (_) => throw TimeoutException('slow network'),
-        )),
+        () => interceptor.intercept(
+          _FakeChain<String>(
+            request: request,
+            onProceed: (_) => throw TimeoutException('slow network'),
+          ),
+        ),
         throwsA(
           isA<ResponseException>()
               .having(
@@ -138,7 +150,7 @@ void main() {
                 'status',
                 ConnectionResultStatus.timeout,
               )
-              .having((e) => e.code, 'code', 1103)
+              .having((e) => e.code, 'code', HttpErrorCode.timeout.code)
               .having((e) => e.httpCode, 'httpCode', isNull)
               .having((e) => e.message, 'message', 'slow network'),
         ),

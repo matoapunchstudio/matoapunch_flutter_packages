@@ -68,6 +68,15 @@ class TierPackage extends Equatable {
     return null;
   }
 
+  /// Returns `true` if this package has a higher rank than [other].
+  bool isHigherThan(TierPackage other) => rank > other.rank;
+
+  /// Returns `true` if this package has a lower rank than [other].
+  bool isLowerThan(TierPackage other) => rank < other.rank;
+
+  /// Returns `true` if this package has the same rank as [other].
+  bool isEqualRank(TierPackage other) => rank == other.rank;
+
   /// Converts this package into a snake_case JSON representation.
   Map<String, dynamic> toJson() {
     return <String, dynamic>{

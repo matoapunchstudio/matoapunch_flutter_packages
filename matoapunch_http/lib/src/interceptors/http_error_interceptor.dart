@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:chopper/chopper.dart';
 import 'package:matoapunch_http/src/enums/connection_result_status.dart';
+import 'package:matoapunch_http/src/enums/http_error_code.dart';
 import 'package:matoapunch_http/src/exceptions/response_exception.dart';
 
 /// Intercepts failed HTTP responses
@@ -31,21 +32,21 @@ class HttpErrorInterceptor implements Interceptor {
     } on SocketException catch (e, s) {
       throw ResponseException(
         status: ConnectionResultStatus.noInternet,
-        code: 1101,
+        code: HttpErrorCode.socket.code,
         message: e.message,
         stackTrace: s,
       );
     } on HandshakeException catch (e, s) {
       throw ResponseException(
         status: ConnectionResultStatus.noInternet,
-        code: 1102,
+        code: HttpErrorCode.handshake.code,
         message: e.message,
         stackTrace: s,
       );
     } on TimeoutException catch (e, s) {
       throw ResponseException(
         status: ConnectionResultStatus.timeout,
-        code: 1103,
+        code: HttpErrorCode.timeout.code,
         message: e.message ?? 'Request timed out',
         stackTrace: s,
       );
@@ -54,7 +55,7 @@ class HttpErrorInterceptor implements Interceptor {
     } on Exception catch (e, s) {
       throw ResponseException(
         status: ConnectionResultStatus.error,
-        code: 1100,
+        code: HttpErrorCode.generic.code,
         message: e.toString(),
         stackTrace: s,
       );
